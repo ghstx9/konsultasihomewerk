@@ -31,9 +31,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $json_answers = json_encode($answers);
 
+    // Hitung Skor VAK
+    $vak_scores = [
+        'Visual' => 0,
+        'Auditori' => 0,
+        'Kinestetik' => 0
+    ];
+
+    foreach ($answers['tes_gaya_belajar'] as $key => $value) {
+        if (isset($vak_scores[$value])) {
+            $vak_scores[$value]++;
+        }
+    }
+
+    // Tentukan Dominasi
+    $max_score = max($vak_scores);
+    $dominant_styles = array_keys($vak_scores, $max_score);
+
+    if (count($dominant_styles) == 1) {
+        $hasil_skor = $dominant_styles[0] . " Dominan";
+    } else {
+        $hasil_skor = "Kombinasi " . implode(" & ", $dominant_styles);
+    }
+
     // Insert into hasil_asesmen table
-    // Assuming hasil_asesmen has id_siswa and ringkasan_hasil (TEXT) columns
-    $sql = "INSERT INTO hasil_asesmen (id_siswa, ringkasan_hasil) VALUES ('$id_siswa', '$json_answers')";
+    $sql = "INSERT INTO hasil_asesmen (id_siswa, ringkasan_hasil, skor) VALUES ('$id_siswa', '$json_answers', '$hasil_skor')";
     
     if ($conn->query($sql) === TRUE) {
         header("Location: dashboard_siswa.php");
@@ -97,10 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="space-y-2">
                     <label class="block text-sm text-slate-600">Q4: Transportasi ke sekolah menggunakan apa?</label>
                     <div class="flex items-center space-x-4">
-                        <input type="radio" name="q4_status_ortu" value="Ya" class="form-radio" required> <span class="text-slate-700">Jalan Kaki</span>
-                        <input type="radio" name="q4_status_ortu" value="Tidak" class="form-radio"> <span class="text-slate-700">Angkot</span>
-                        <input type="radio" name="q4_status_ortu" value="Tidak" class="form-radio"> <span class="text-slate-700">Diantar</span>
-                        <input type="radio" name="q4_status_ortu" value="Tidak" class="form-radio"> <span class="text-slate-700">Motor Pribadi</span>
+                        <input type="radio" name="q4_status_ortu" value="Jalan Kaki" class="form-radio" required> <span class="text-slate-700">Jalan Kaki</span>
+                        <input type="radio" name="q4_status_ortu" value="Angkot" class="form-radio"> <span class="text-slate-700">Angkot</span>
+                        <input type="radio" name="q4_status_ortu" value="Diantar" class="form-radio"> <span class="text-slate-700">Diantar</span>
+                        <input type="radio" name="q4_status_ortu" value="Motor Pribadi" class="form-radio"> <span class="text-slate-700">Motor Pribadi</span>
                     </div>
                 </div>
             </div>
