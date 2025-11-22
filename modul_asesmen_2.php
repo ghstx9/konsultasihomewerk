@@ -2,18 +2,15 @@
 session_start();
 include 'config/database.php';
 
-// Cek Sesi
 if (!isset($_SESSION['user_id'])) { header("Location: index.php"); exit; }
 
-// Ambil ID Siswa
 $user_id = $_SESSION['user_id'];
 $res = $conn->query("SELECT id FROM siswa WHERE id_pengguna = '$user_id'");
 $row = $res->fetch_assoc();
 $id_siswa = $row['id'];
 
-// PROSES SUBMIT
+// Proses Submit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Collect answers
     $answers = [
         'status_orang_tua' => [
             'q1_status_ortu' => $_POST['q1_status_ortu'],
@@ -31,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $json_answers = json_encode($answers);
 
-    // Hitung Skor VAK
     $vak_scores = [
         'Visual' => 0,
         'Auditori' => 0,
@@ -44,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Tentukan Dominasi
     $max_score = max($vak_scores);
     $dominant_styles = array_keys($vak_scores, $max_score);
 
@@ -54,11 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hasil_skor = "Kombinasi " . implode(" & ", $dominant_styles);
     }
 
-    // Insert into hasil_asesmen table
     $sql = "INSERT INTO hasil_asesmen (id_siswa, ringkasan_hasil, skor) VALUES ('$id_siswa', '$json_answers', '$hasil_skor')";
     
     if ($conn->query($sql) === TRUE) {
-        header("Location: dashboard_siswa.php");
+        header("Location: modul_asesmen_3.php");
     } else {
         echo "Error: " . $conn->error;
     }
@@ -91,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form method="POST" class="p-8 space-y-8">
             
             <div class="space-y-4">
-                <h3 class="font-bold text-slate-700 border-b pb-2">Kondisi Keluarga & Ekonomi</h3>
+                <h3 class="font-bold text-slate-700 border-b pb-2">Bagian 1: Kondisi Keluarga & Ekonomi</h3>
                 <div class="space-y-2">
                     <label class="block text-sm text-slate-600">Q1: Status Orang Tua?</label>
                     <div class="flex items-center space-x-4">
@@ -128,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 
             <div class="space-y-4">
-                <h3 class="font-bold text-slate-700 border-b pb-2">Tes Gaya Belajar (VAK - Visual, Auditori, Kinestetik)</h3>
+                <h3 class="font-bold text-slate-700 border-b pb-2">Bagian 2: Tes Gaya Belajar (VAK - Visual, Auditori, Kinestetik)</h3>
                 <div class="space-y-2">
                     <label class="block text-sm text-slate-600">Q1: Kalau ada pelajaran baru, aku lebih cepat paham jika...</label>
                     <div class="space-y-2">
