@@ -21,15 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn->begin_transaction();
 
         try {
+            // HASH PASSWORD
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
             // Insert ke tabel 'user'
             // Default peran = 'siswa'
             $stmt_user = $conn->prepare("INSERT INTO user (email, kata_sandi, peran) VALUES (?, ?, 'siswa')");
-            $stmt_user->bind_param("ss", $email, $password);
+            $stmt_user->bind_param("ss", $email, $hashed_password);
             $stmt_user->execute();
             
             $new_user_id = $conn->insert_id;
 
-            // B. Insert ke tabel 'siswa'
             $stmt_siswa = $conn->prepare("INSERT INTO siswa (id_pengguna, nis, nama_lengkap, tingkat_kelas, jurusan, jenis_kelamin) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt_siswa->bind_param("ississ", $new_user_id, $nis, $nama, $kelas, $jurusan, $gender);
             $stmt_siswa->execute();
