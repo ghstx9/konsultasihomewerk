@@ -11,30 +11,33 @@ $id_siswa = $row['id'];
 
 // Proses Submit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $answers = [
-        'status_orang_tua' => [
-            'q1_status_ortu' => $_POST['q1_status_ortu'],
-            'q2_status_ortu' => $_POST['q2_status_ortu'],
-            'q3_status_ortu' => $_POST['q3_status_ortu'],
-            'q4_status_ortu' => $_POST['q4_status_ortu'],
-        ],
-        'tes_gaya_belajar' => [
-            'q1_gaya_belajar' => $_POST['q1_gaya_belajar'],
-            'q2_gaya_belajar' => $_POST['q2_gaya_belajar'],
-            'q3_gaya_belajar' => $_POST['q3_gaya_belajar'],
-            'q4_gaya_belajar' => $_POST['q4_gaya_belajar'],
-        ],
+    // --- BAGIAN 1: KEPRIBADIAN (Kondisi Keluarga) ---
+    $answers_kepribadian = [
+        'q1_status_ortu' => $_POST['q1_status_ortu'],
+        'q2_status_ortu' => $_POST['q2_status_ortu'],
+        'q3_status_ortu' => $_POST['q3_status_ortu'],
+        'q4_status_ortu' => $_POST['q4_status_ortu'],
     ];
+    $json_kepribadian = json_encode($answers_kepribadian);
+    $skor_kepribadian = "-"; // Tidak ada skor khusus untuk bagian ini
 
-    $json_answers = json_encode($answers);
+    // --- BAGIAN 2: GAYA BELAJAR (VAK) ---
+    $answers_gaya_belajar = [
+        'q1_gaya_belajar' => $_POST['q1_gaya_belajar'],
+        'q2_gaya_belajar' => $_POST['q2_gaya_belajar'],
+        'q3_gaya_belajar' => $_POST['q3_gaya_belajar'],
+        'q4_gaya_belajar' => $_POST['q4_gaya_belajar'],
+    ];
+    $json_gaya_belajar = json_encode($answers_gaya_belajar);
 
+    // Hitung Skor VAK
     $vak_scores = [
         'Visual' => 0,
         'Auditori' => 0,
         'Kinestetik' => 0
     ];
 
-    foreach ($answers['tes_gaya_belajar'] as $key => $value) {
+    foreach ($answers_gaya_belajar as $key => $value) {
         if (isset($vak_scores[$value])) {
             $vak_scores[$value]++;
         }
@@ -49,9 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hasil_skor = "Kombinasi " . implode(" & ", $dominant_styles);
     }
 
-    $sql = "INSERT INTO hasil_asesmen (id_siswa, ringkasan_hasil, skor) VALUES ('$id_siswa', '$json_answers', '$hasil_skor')";
+    // --- INSERT DATABASE (2 Query Terpisah) ---
     
-    if ($conn->query($sql) === TRUE) {
+    // 1. Insert Kepribadian
+    $sql_kepribadian = "INSERT INTO hasil_asesmen (id_siswa, kategori, ringkasan_hasil, skor) 
+                        VALUES ('$id_siswa', 'kepribadian', '$json_kepribadian', '$skor_kepribadian')";
+    
+    // 2. Insert Gaya Belajar
+    $sql_gaya_belajar = "INSERT INTO hasil_asesmen (id_siswa, kategori, ringkasan_hasil, skor) 
+                         VALUES ('$id_siswa', 'gaya_belajar', '$json_gaya_belajar', '$hasil_skor')";
+    
+    // Jalankan Query
+    $success_kepribadian = $conn->query($sql_kepribadian);
+    $success_gaya_belajar = $conn->query($sql_gaya_belajar);
+
+    if ($success_kepribadian && $success_gaya_belajar) {
         header("Location: modul_asesmen_3.php");
     } else {
         echo "Error: " . $conn->error;
