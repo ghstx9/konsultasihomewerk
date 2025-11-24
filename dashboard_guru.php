@@ -117,7 +117,9 @@ $res_schedule = $conn->query($sql_schedule);
                                 <div class="flex justify-between items-start mb-3">
                                     <div>
                                         <h4 class="font-bold text-slate-800 flex items-center gap-2">
-                                            <?= $req['nama_lengkap'] ?>
+                                            <a href="detail_siswa.php?id=<?= $req['id_siswa'] ?>" class="hover:text-blue-600 hover:underline transition">
+                                                <?= $req['nama_lengkap'] ?>
+                                            </a>
                                             <?php if($req['is_priority'] > 0): ?>
                                                 <span class="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wide">Prioritas</span>
                                             <?php endif; ?>
@@ -164,7 +166,11 @@ $res_schedule = $conn->query($sql_schedule);
                                         <span class="text-xl font-bold"><?= date('d', strtotime($sch['tanggal_konsultasi'])) ?></span>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-slate-800"><?= $sch['nama_lengkap'] ?></h4>
+                                        <h4 class="font-bold text-slate-800">
+                                            <a href="detail_siswa.php?id=<?= $sch['id_siswa'] ?>" class="hover:text-blue-600 hover:underline transition">
+                                                <?= $sch['nama_lengkap'] ?>
+                                            </a>
+                                        </h4>
                                         <p class="text-sm text-slate-500"><?= date('H:i', strtotime($sch['tanggal_konsultasi'])) ?> WIB • <?= $sch['kategori_topik'] ?></p>
                                         <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium">
                                             <?= ucfirst($sch['metode_konsultasi']) ?>
