@@ -153,6 +153,48 @@ $list_konselor = $conn->query("SELECT id, nama_lengkap FROM konselor");
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Permintaan Menunggu -->
+                <?php
+                $sql_pending = "
+                    SELECT k.*, c.nama_lengkap as nama_konselor 
+                    FROM konsultasi k 
+                    JOIN konselor c ON k.id_konselor = c.id 
+                    WHERE k.id_siswa = '$id_siswa' AND k.status = 'menunggu' 
+                    ORDER BY k.created_at DESC
+                ";
+                $res_pending = $conn->query($sql_pending);
+                ?>
+                
+                <?php if($res_pending->num_rows > 0): ?>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-md transition relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-yellow-50 rounded-bl-full -mr-8 -mt-8 z-0"></div>
+                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2 mb-4 relative z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Menunggu Konfirmasi
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <?php while($pend = $res_pending->fetch_assoc()): ?>
+                            <div class="flex gap-3 items-start border-b border-slate-50 pb-3 last:border-0 last:pb-0 relative z-10">
+                                <div class="bg-yellow-50 text-yellow-600 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm"><?= $pend['nama_konselor'] ?></h4>
+                                    <p class="text-xs text-slate-500 mb-1">
+                                        <?= date('d M Y', strtotime($pend['tanggal_konsultasi'])) ?>, <?= date('H:i', strtotime($pend['tanggal_konsultasi'])) ?> WIB
+                                    </p>
+                                    <span class="inline-block text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700 font-medium">
+                                        Menunggu
+                                    </span>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
                     <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>
