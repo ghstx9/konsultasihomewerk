@@ -109,12 +109,12 @@ if ($is_logged_in && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submi
     $keluhan = $_POST['keluhan'];
     $tanggal = $_POST['tanggal'];
     $jam = $_POST['jam'];
-    $metode = $_POST['metode'];
+
     
     $tgl_waktu = $tanggal . ' ' . $jam . ':00';
 
-    $stmt = $conn->prepare("INSERT INTO konsultasi (id_siswa, id_konselor, kategori_topik, deskripsi_keluhan, tanggal_konsultasi, status, metode_konsultasi) VALUES (?, ?, ?, ?, ?, 'menunggu', ?)");
-    $stmt->bind_param("iissss", $id_siswa, $id_konselor, $topik, $keluhan, $tgl_waktu, $metode);
+    $stmt = $conn->prepare("INSERT INTO konsultasi (id_siswa, id_konselor, kategori_topik, deskripsi_keluhan, tanggal_konsultasi, status) VALUES (?, ?, ?, ?, ?, 'menunggu')");
+    $stmt->bind_param("iisss", $id_siswa, $id_konselor, $topik, $keluhan, $tgl_waktu);
     
     if ($stmt->execute()) {
         $msg_konsul = "<div class='bg-green-100 text-green-700 p-4 rounded mb-6'>Permintaan konsultasi berhasil dikirim! Tunggu konfirmasi dari guru ya.</div>";
@@ -245,9 +245,6 @@ if ($is_logged_in && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submi
                                     <div>
                                         <h4 class="font-bold text-slate-800 text-sm"><?= $sch['nama_konselor'] ?></h4>
                                         <p class="text-xs text-slate-500 mb-1"><?= date('H:i', strtotime($sch['tanggal_konsultasi'])) ?> WIB • <?= $sch['kategori_topik'] ?></p>
-                                        <span class="inline-block text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 font-medium">
-                                            <?= ucfirst($sch['metode_konsultasi']) ?>
-                                        </span>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -372,13 +369,7 @@ if ($is_logged_in && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submi
                             <option value="Karir">Karir</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Metode</label>
-                        <select name="metode" required class="w-full border rounded px-3 py-2 text-sm">
-                            <option value="offline">Tatap Muka (Offline)</option>
-                            <option value="online">Daring (Online)</option>
-                        </select>
-                    </div>
+
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">

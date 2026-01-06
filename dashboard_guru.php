@@ -128,7 +128,7 @@ $res_schedule = $conn->query($sql_schedule);
                                                 <span class="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wide">Prioritas</span>
                                             <?php endif; ?>
                                         </h4>
-                                        <p class="text-xs text-slate-500"><?= $req['tingkat_kelas'] ?> <?= $req['jurusan'] ?> • <?= ucfirst($req['metode_konsultasi']) ?></p>
+                                        <p class="text-xs text-slate-500"><?= $req['tingkat_kelas'] ?> <?= $req['jurusan'] ?></p>
                                     </div>
                                     <span class="text-xs bg-white text-slate-600 px-2 py-1 rounded border border-slate-100">
                                         <?= date('d M, H:i', strtotime($req['tanggal_konsultasi'])) ?>
@@ -176,9 +176,6 @@ $res_schedule = $conn->query($sql_schedule);
                                             </a>
                                         </h4>
                                         <p class="text-sm text-slate-500"><?= date('H:i', strtotime($sch['tanggal_konsultasi'])) ?> WIB • <?= $sch['kategori_topik'] ?></p>
-                                        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-[#6C5CE7]/10 text-[#6C5CE7] font-medium">
-                                            <?= ucfirst($sch['metode_konsultasi']) ?>
-                                        </span>
                                     </div>
                                 </div>
                             <?php endwhile; ?>

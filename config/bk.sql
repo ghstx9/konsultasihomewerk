@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 06, 2026 at 10:44 AM
+-- Generation Time: Jan 06, 2026 at 12:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,8 +44,8 @@ CREATE TABLE `detail_keluarga_siswa` (
 --
 
 INSERT INTO `detail_keluarga_siswa` (`id`, `id_siswa`, `nama_ayah`, `pekerjaan_ayah`, `nama_ibu`, `pekerjaan_ibu`, `status_ekonomi`, `jumlah_saudara`, `alamat`) VALUES
-(1, 1, 'Scot', 'apalah', 'Scut', 'apalah', 'Mampu', 2, 'p'),
-(2, 2, 'Mexican Man', 'apalah', 'Mexican Woman', 'apalah', 'Mampu', 4, 's');
+(1, 1, 's', 's', 's', 's', 'Mampu', 2, 's'),
+(2, 2, 's', 's', 's', 's', 'Mampu', 2, 's');
 
 -- --------------------------------------------------------
 
@@ -67,14 +67,14 @@ CREATE TABLE `hasil_asesmen` (
 --
 
 INSERT INTO `hasil_asesmen` (`id`, `id_siswa`, `kategori`, `ringkasan_hasil`, `skor`, `terakhir_diperbarui`) VALUES
-(1, 1, 'kepribadian', '{\"q1_status_ortu\":\"Lengkap\",\"q2_status_ortu\":\"Ramai\",\"q3_status_ortu\":\"Ya\",\"q4_status_ortu\":\"Angkot\"}', '-', '2025-12-01 04:07:26'),
-(2, 1, 'gaya_belajar', '{\"q1_gaya_belajar\":\"Auditori\",\"q2_gaya_belajar\":\"Auditori\",\"q3_gaya_belajar\":\"Kinestetik\",\"q4_gaya_belajar\":\"Kinestetik\"}', 'Kombinasi Auditori & Kinestetik', '2025-12-01 04:07:27'),
-(3, 1, 'kesehatan_mental', '{\"q1_nyaman_teman\":\"Ya\",\"q2_cemas\":\"Ya\",\"q3_cerita\":\"Tidak\",\"q4_tekanan_akademik\":\"Tidak\",\"q5_bullying\":\"Ya\"}', 'PERLU PERHATIAN KHUSUS (Bullying)', '2025-12-01 04:07:54'),
-(4, 1, 'minat_karir', '{\"rencana_lulus\":\"Kuliah\",\"mapel_favorit\":[\"KK\",\"Bahasa Indonesia\",\"Agama\"],\"minat_pekerjaan\":\"Seni & Kreatif\"}', 'Kuliah', '2025-12-01 04:07:54'),
-(5, 2, 'kepribadian', '{\"q1_status_ortu\":\"Lengkap\",\"q2_status_ortu\":\"Ramai\",\"q3_status_ortu\":\"Tidak\",\"q4_status_ortu\":\"Jalan Kaki\"}', '-', '2025-12-01 04:09:40'),
-(6, 2, 'gaya_belajar', '{\"q1_gaya_belajar\":\"Visual\",\"q2_gaya_belajar\":\"Visual\",\"q3_gaya_belajar\":\"Kinestetik\",\"q4_gaya_belajar\":\"Auditori\"}', 'Visual Dominan', '2025-12-01 04:09:40'),
-(7, 2, 'kesehatan_mental', '{\"q1_nyaman_teman\":\"Ya\",\"q2_cemas\":\"Tidak\",\"q3_cerita\":\"Tidak\",\"q4_tekanan_akademik\":\"Tidak\",\"q5_bullying\":\"Tidak\"}', 'Stabil', '2025-12-01 04:09:53'),
-(8, 2, 'minat_karir', '{\"rencana_lulus\":\"Kerja/Wirausaha\",\"mapel_favorit\":[\"KK\",\"Bahasa Indonesia\",\"Agama\"],\"minat_pekerjaan\":\"Sosial & Hukum\"}', 'Kerja/Wirausaha', '2025-12-01 04:09:53');
+(1, 1, 'kepribadian', '{\"q1_status_ortu\":\"Lengkap\",\"q2_status_ortu\":\"Ramai\",\"q3_status_ortu\":\"Ya\",\"q4_status_ortu\":\"Jalan Kaki\"}', '-', '2026-01-06 11:17:25'),
+(2, 1, 'gaya_belajar', '{\"q1_gaya_belajar\":\"Auditori\",\"q2_gaya_belajar\":\"Visual\",\"q3_gaya_belajar\":\"Visual\",\"q4_gaya_belajar\":\"Kinestetik\"}', 'Visual Dominan', '2026-01-06 11:17:25'),
+(3, 1, 'kesehatan_mental', '{\"q1_nyaman_teman\":\"Ya\",\"q2_cemas\":\"Tidak\",\"q3_cerita\":\"Ya\",\"q4_tekanan_akademik\":\"Ya\",\"q5_bullying\":\"Tidak\"}', 'Stabil', '2026-01-06 11:17:38'),
+(4, 1, 'minat_karir', '{\"rencana_lulus\":\"Sekolah Kedinasan\",\"mapel_favorit\":[\"Matematika\",\"Olahraga\",\"Bahasa Indonesia\"],\"minat_pekerjaan\":\"Sosial & Hukum\"}', 'Sekolah Kedinasan', '2026-01-06 11:17:38'),
+(5, 2, 'kepribadian', '{\"q1_status_ortu\":\"Lengkap\",\"q2_status_ortu\":\"Ramai\",\"q3_status_ortu\":\"Tidak\",\"q4_status_ortu\":\"Jalan Kaki\"}', '-', '2026-01-06 11:18:21'),
+(6, 2, 'gaya_belajar', '{\"q1_gaya_belajar\":\"Visual\",\"q2_gaya_belajar\":\"Visual\",\"q3_gaya_belajar\":\"Visual\",\"q4_gaya_belajar\":\"Visual\"}', 'Visual Dominan', '2026-01-06 11:18:21'),
+(7, 2, 'kesehatan_mental', '{\"q1_nyaman_teman\":\"Ya\",\"q2_cemas\":\"Ya\",\"q3_cerita\":\"Ya\",\"q4_tekanan_akademik\":\"Ya\",\"q5_bullying\":\"Ya\"}', 'PERLU PERHATIAN KHUSUS (Bullying)', '2026-01-06 11:18:30'),
+(8, 2, 'minat_karir', '{\"rencana_lulus\":\"Kerja/Wirausaha\",\"mapel_favorit\":[\"Olahraga\",\"KK\",\"Agama\"],\"minat_pekerjaan\":\"Seni & Kreatif\"}', 'Kerja/Wirausaha', '2026-01-06 11:18:30');
 
 -- --------------------------------------------------------
 
@@ -95,7 +95,7 @@ CREATE TABLE `konselor` (
 --
 
 INSERT INTO `konselor` (`id`, `id_pengguna`, `nip`, `nama_lengkap`, `spesialisasi`) VALUES
-(1, 2, '6001', 'Dutch van der Linde', 'Konselor Umum');
+(1, 2, '6001', 'counselortest', 'Konselor Umum');
 
 -- --------------------------------------------------------
 
@@ -111,7 +111,6 @@ CREATE TABLE `konsultasi` (
   `deskripsi_keluhan` text NOT NULL,
   `tanggal_konsultasi` datetime NOT NULL,
   `status` enum('menunggu','disetujui','ditolak','dijadwalkan_ulang','selesai') DEFAULT 'menunggu',
-  `metode_konsultasi` enum('offline','online') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -119,9 +118,9 @@ CREATE TABLE `konsultasi` (
 -- Dumping data for table `konsultasi`
 --
 
-INSERT INTO `konsultasi` (`id`, `id_siswa`, `id_konselor`, `kategori_topik`, `deskripsi_keluhan`, `tanggal_konsultasi`, `status`, `metode_konsultasi`, `created_at`) VALUES
-(1, 1, 1, 'Sosial', '360', '2025-12-16 11:08:00', 'menunggu', 'offline', '2025-12-01 04:08:35'),
-(2, 2, 1, 'Pribadi', 'vondutchcultclassicbutistillpop', '2025-12-11 11:10:00', 'disetujui', 'offline', '2025-12-01 04:10:35');
+INSERT INTO `konsultasi` (`id`, `id_siswa`, `id_konselor`, `kategori_topik`, `deskripsi_keluhan`, `tanggal_konsultasi`, `status`, `created_at`) VALUES
+(1, 2, 1, 'Pribadi', 'tes', '2026-01-09 16:44:00', 'disetujui', '2026-01-06 11:43:31'),
+(2, 1, 1, 'Sosial', 'p', '2026-01-14 20:49:00', 'disetujui', '2026-01-06 11:45:40');
 
 -- --------------------------------------------------------
 
@@ -160,8 +159,8 @@ CREATE TABLE `siswa` (
 --
 
 INSERT INTO `siswa` (`id`, `id_pengguna`, `nis`, `nama_lengkap`, `tingkat_kelas`, `jurusan`, `jenis_kelamin`) VALUES
-(1, 3, '1001', 'John Marston', 10, 'RPL', 'L'),
-(2, 4, '1002', 'Javier Escuella', 10, 'DKV', 'L');
+(1, 3, '1001', 'siswa 1', 11, 'RPL', 'L'),
+(2, 4, '1002', 'siswa 2', 10, 'TKL', 'L');
 
 -- --------------------------------------------------------
 
@@ -182,10 +181,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `kata_sandi`, `peran`, `created_at`) VALUES
-(1, 'rickymarove@gmail.com', '$2a$12$ub8g4ubIyKv0bEMzi.bICueOsZibAArAm9FXQHuwwHyWF4J96Dc16', 'admin', '2025-12-01 04:05:38'),
-(2, 'dutchvanderlinde@gmail.com', '$2y$10$bdBtSAcockdUkpQ5.H8kxesaXBs6zEub7EovqRK/w9iwov9ZzNWKG', 'konselor', '2025-12-01 04:05:56'),
-(3, 'johnmarston@gmail.com', '$2y$10$ESdCRYmshKzJAiqhwg2PyOS.sKyhmBqiTslVBawLm0gxDvLTimk.e', 'siswa', '2025-12-01 04:06:25'),
-(4, 'javierescuella@gmail.com', '$2y$10$gWVBXV8lxKH9ErfUOlahNOhRqffQyZ/TUF72kp/FVRD50sDY83sxO', 'siswa', '2025-12-01 04:06:44');
+(1, 'rickymarove@gmail.com', '$2a$12$Njj20/FcS0J7J66e.Nq/tuBaF56T.3EL/L2NtuMHvzjrHH3MA5.7e', 'admin', '2026-01-06 11:14:41'),
+(2, 'counselortest@gmail.com', '$2y$10$bNFfH.CowmdmnFwDeB1iYeEFXtSKJOD0KaRRslMXwNLcFMDIIGoDW', 'konselor', '2026-01-06 11:15:15'),
+(3, 'siswa@gmail.com', '$2y$10$9DAukUv6xb0.nHAHFUMC6eknAs5uT7yQMtfy7u5mKPJGsjfCu3/ai', 'siswa', '2026-01-06 11:15:38'),
+(4, 'siswa2@gmail.com', '$2y$10$w1YC0Z6SSCCn/Y5JX/70CuvclpvfzJxW1XfZs/W9BktTqXI/iJuz.', 'siswa', '2026-01-06 11:17:58');
 
 --
 -- Indexes for dumped tables
