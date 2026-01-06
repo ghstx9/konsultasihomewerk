@@ -339,57 +339,66 @@ if ($is_logged_in && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submi
     </div>
 
     <?php if ($is_logged_in): ?>
-    <dialog id="modalKonsul" class="modal p-0 rounded-xl shadow-2xl backdrop:bg-black/50 w-full max-w-lg">
-        <div class="bg-white p-6">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 class="font-bold text-lg text-slate-800">Buat Janji Konsultasi</h3>
-                <button onclick="document.getElementById('modalKonsul').close()" class="text-slate-400 hover:text-slate-600">&times;</button>
+    <dialog id="modalKonsul" class="modal p-0 rounded-2xl shadow-2xl backdrop:bg-black/40 w-full max-w-lg open:animate-fade-in">
+        <div class="bg-white p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-2xl text-slate-800">Buat Janji Konsultasi</h3>
+                <button onclick="document.getElementById('modalKonsul').close()" class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
             </div>
             
-            <form method="POST" class="space-y-4">
+            <form method="POST" class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Guru BK</label>
-                    <select name="id_konselor" required class="w-full border rounded px-3 py-2 text-sm">
-                        <option value="">-- Pilih Guru --</option>
-                        <?php if ($list_konselor): ?>
-                        <?php while($k = $list_konselor->fetch_assoc()): ?>
-                            <option value="<?= $k['id'] ?>"><?= $k['nama_lengkap'] ?></option>
-                        <?php endwhile; ?>
-                        <?php endif; ?>
-                    </select>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Guru BK</label>
+                    <div class="relative">
+                        <select name="id_konselor" required class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C5CE7] focus:ring-4 focus:ring-[#6C5CE7]/10 transition">
+                            <option value="">-- Pilih Guru --</option>
+                            <?php if ($list_konselor): ?>
+                            <?php while($k = $list_konselor->fetch_assoc()): ?>
+                                <option value="<?= $k['id'] ?>"><?= $k['nama_lengkap'] ?></option>
+                            <?php endwhile; ?>
+                            <?php endif; ?>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Topik</label>
-                        <select name="topik" required class="w-full border rounded px-3 py-2 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Topik</label>
+                    <div class="relative">
+                        <select name="topik" required class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C5CE7] focus:ring-4 focus:ring-[#6C5CE7]/10 transition">
                             <option value="Akademik">Akademik</option>
                             <option value="Pribadi">Pribadi</option>
                             <option value="Sosial">Sosial</option>
                             <option value="Karir">Karir</option>
                         </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
                     </div>
-
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
-                        <input type="date" name="tanggal" required class="w-full border rounded px-3 py-2 text-sm" min="<?= date('Y-m-d') ?>">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tanggal</label>
+                        <input type="date" name="tanggal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C5CE7] focus:ring-4 focus:ring-[#6C5CE7]/10 transition" min="<?= date('Y-m-d') ?>">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Jam</label>
-                        <input type="time" name="jam" required class="w-full border rounded px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Jam</label>
+                        <input type="time" name="jam" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C5CE7] focus:ring-4 focus:ring-[#6C5CE7]/10 transition">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Keluhan / Masalah</label>
-                    <textarea name="keluhan" rows="3" required class="w-full border rounded px-3 py-2 text-sm" placeholder="Ceritakan sedikit apa yang ingin kamu bahas..."></textarea>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Keluhan / Masalah</label>
+                    <textarea name="keluhan" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C5CE7] focus:ring-4 focus:ring-[#6C5CE7]/10 transition" placeholder="Ceritakan sedikit apa yang ingin kamu bahas..."></textarea>
                 </div>
 
-                <div class="pt-2">
-                    <button type="submit" name="submit_konsul" class="w-full bg-[#6C5CE7] hover:bg-[#5B4ED1] text-white font-bold py-2.5 rounded-lg transition">
+                <div class="pt-4">
+                    <button type="submit" name="submit_konsul" class="w-full bg-[#6C5CE7] hover:bg-[#5B4ED1] text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-purple-200 transform active:scale-[0.98]">
                         Kirim Permintaan
                     </button>
                 </div>
