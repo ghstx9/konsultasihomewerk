@@ -184,6 +184,8 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
+-- Passwords are all just the number '2' 
+-- REMEMBER THESE ARE ONLY DUMMY CREDENTIALS FOR TESTING
 INSERT INTO `user` (`id`, `email`, `kata_sandi`, `peran`, `created_at`) VALUES
 (1, 'rickymarove@gmail.com', '$2a$12$Njj20/FcS0J7J66e.Nq/tuBaF56T.3EL/L2NtuMHvzjrHH3MA5.7e', 'admin', '2026-01-06 11:14:41'),
 (2, 'counselortest@gmail.com', '$2y$10$bNFfH.CowmdmnFwDeB1iYeEFXtSKJOD0KaRRslMXwNLcFMDIIGoDW', 'konselor', '2026-01-06 11:15:15'),
