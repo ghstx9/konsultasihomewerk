@@ -11,83 +11,118 @@ if (isset($_SESSION['user_id']) && $_SESSION['peran'] == 'siswa') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Counseling | Ruang Aman</title>
+    <title>Masuk - BK Skaju</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-    <style>
-        .lexend-font {
-            font-family: "Lexend", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 400;
-            font-style: normal;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Lexend', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6C5CE7',
+                        secondary: '#a55eea',
+                        accent: '#F9F7FF',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
             }
-    </style>
+        }
+    </script>
 </head>
+<body class="font-sans antialiased bg-slate-50 min-h-screen flex items-center justify-center p-4">
 
-<body class="min-h-screen flex items-center justify-center lexend-font bg-[#f0f9ff]">
-
-    <div class="container mx-auto px-4 h-screen flex flex-col md:flex-row items-center">
+    <div class="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-[650px] md:h-[700px]">
         
-        <div class="w-full md:w-1/2 p-8 text-center md:text-left">
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
-                Aplikasi Konseling <span class="text-yellow-400">Skaju</span>
-            </h1>
-            <p class="text-lg text-slate-600 mb-8">
-                Kami siap mendengarkan. Jadwalkan konsultasi, kenali potensimu, dan temukan solusi terbaik. 
-            </p>
+        <!-- Left Side: Branding & Illustration -->
+        <div class="hidden md:flex w-1/2 bg-gradient-to-br from-primary to-secondary relative flex-col justify-between p-12 text-white overflow-hidden">
+            <!-- Background Decorations -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-16 -mb-16 blur-3xl"></div>
             
-            <div class="flex flex-wrap gap-4 justify-center md:justify-start text-sm text-slate-500">
-                <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                    🔒 Rahasia Terjamin
-                </div>
-                <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
-                    🧠 Kenali Diri
-                </div>
+            <div class="relative z-10">
+                <a href="index.php" class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md py-2 px-4 rounded-xl hover:bg-white/30 transition w-max">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5m7 7-7-7 7-7"/>
+                    </svg>
+                    <span class="font-bold text-sm">Kembali ke Beranda</span>
+                </a>
+            </div>
+
+            <div class="relative z-10 flex flex-col items-center text-center mt-8 p-4">
+                <img src="assets/img/login_hero.png" alt="Welcome Back Illustration" class="w-full max-w-sm drop-shadow-2xl animate-float">
+            </div>
+
+            <div class="relative z-10 text-center">
+                <h2 class="text-3xl font-bold mb-2">Selamat Datang Kembali!</h2>
+                <p class="text-indigo-100">Siap untuk melanjutkan perjalananmu menemukan potensi diri?</p>
             </div>
         </div>
 
-        <div class="w-full md:w-1/2 p-4 max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">Masuk Aplikasi</h2>
-                
-                <?php if(isset($_GET['error'])): ?>
-                    <div class="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-                        Email atau Password salah!
-                    </div>
-                <?php endif; ?>
-
-                <form action="auth_process.php" method="POST" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                        <input type="email" name="email" required 
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                        <input type="password" name="password" required 
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                    </div>
-                    <button type="submit" 
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">
-                        Masuk Sekarang
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <div class="border-t pt-4 mt-4">
-                        <p class="text-sm text-slate-600">Belum punya akun?</p>
-                        <a href="register.php" class="inline-block mt-2 text-blue-600 font-bold hover:underline">
-                            Daftar sebagai Siswa
-                        </a>
-                    </div>
-                </div>
+        <!-- Right Side: Login Form -->
+        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center relative">
+            
+            <div class="md:hidden absolute top-6 left-6">
+                 <a href="index.php" class="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5m7 7-7-7 7-7"/>
+                    </svg>
+                    <span class="font-semibold text-sm">Kembali</span>
+                </a>
             </div>
+
+            <div class="mb-10 text-center md:text-left">
+                <span class="font-bold text-3xl tracking-tight text-slate-900 block mb-2">BK<span class="text-primary">Skaju</span></span>
+                <h1 class="text-2xl font-bold text-slate-800">Masuk ke Akunmu</h1>
+                <p class="text-slate-500 mt-2">Silakan masukkan detail akunmu untuk melanjutkan.</p>
+            </div>
+
+            <?php if(isset($_GET['error'])): ?>
+                <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-6 flex items-center gap-3 text-sm animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Email atau Password yang kamu masukkan salah.
+                </div>
+            <?php endif; ?>
+
+            <form action="auth_process.php" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Email Sekolah</label>
+                    <input type="email" name="email" required placeholder="nama@siswa.smkn7batam.sch.id"
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition font-medium text-slate-700 placeholder:text-slate-400">
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold text-slate-700">Password</label>
+                        <a href="#" class="text-sm font-semibold text-primary hover:text-secondary transition">Lupa password?</a>
+                    </div>
+                    <input type="password" name="password" required placeholder="••••••••"
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition font-medium text-slate-700 placeholder:text-slate-400">
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 rounded-xl transition shadow-lg shadow-primary/30 transform active:scale-[0.98]">
+                    Masuk Sekarang
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm text-slate-500 font-medium">
+                Belum punya akun? 
+                <a href="register.php" class="text-primary hover:text-secondary font-bold hover:underline transition">Daftar Akun Baru</a>
+            </div>
+            
         </div>
     </div>
-
-
-                <!-- is this the cleanest front-end code you've ever seen? /s  --> 
-
 
 </body>
 </html>
