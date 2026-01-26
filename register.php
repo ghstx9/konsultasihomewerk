@@ -45,7 +45,7 @@ include 'includes/header.php';
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">NIS</label>
-                            <input type="text" name="nis" required class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none">
+                            <input type="text" name="nis" required maxlength="10" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Kelamin</label>

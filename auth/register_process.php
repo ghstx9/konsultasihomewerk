@@ -17,6 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
+    if (!ctype_digit($nis)) {
+        header("Location: ../register.php?error=" . urlencode("NIS harus berupa angka!"));
+        exit;
+    }
+
+    if (strlen($nis) > 10) {
+        header("Location: ../register.php?error=" . urlencode("NIS tidak boleh lebih dari 10 digit!"));
+        exit;
+    }
+
     if (strlen($password) < 6) {
         header("Location: ../register.php?error=" . urlencode("Password harus memiliki minimal 6 karakter!"));
         exit;
