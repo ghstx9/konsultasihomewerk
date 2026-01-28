@@ -30,7 +30,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
     $json_mental = json_encode($answers_mental);
 
+    // Hitung Skor Numerik (0-100)
+    // Base 50, + atau - berdasarkan jawaban
+    $score_val = 50;
+    if ($answers_mental['q1_nyaman_teman'] == 'Ya') $score_val += 10; else $score_val -= 5;
+    if ($answers_mental['q2_cemas'] == 'Tidak') $score_val += 10; else $score_val -= 10;
+    if ($answers_mental['q3_cerita'] == 'Ya') $score_val += 10; else $score_val -= 5;
+    if ($answers_mental['q4_tekanan_akademik'] == 'Tidak') $score_val += 10; else $score_val -= 10;
+    
+    // Critical Weight for Bullying
+    if ($answers_mental['q5_bullying'] == 'Tidak') {
+        $score_val += 10;
+    } else {
+        $score_val -= 20;
+    }
+
+    // Clamp score between 0-100
+    $score_val = max(0, min(100, $score_val));
+
     $skor_mental = "Stabil";
+    if ($score_val < 60) {
+        $skor_mental = "Perlu Perhatian";
+    }
     if ($answers_mental['q5_bullying'] == 'Ya') {
         $skor_mental = "PERLU PERHATIAN KHUSUS (Bullying)";
     }
@@ -47,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $skor_karir = $answers_karir['rencana_lulus'];
 
     // Insert ke database
-    $sql_mental = "INSERT INTO hasil_asesmen (id_siswa, kategori, ringkasan_hasil, skor) 
-                   VALUES ('$id_siswa', 'kesehatan_mental', '$json_mental', '$skor_mental')";
+    $sql_mental = "INSERT INTO hasil_asesmen (id_siswa, kategori, ringkasan_hasil, skor, skor_numerik) 
+                   VALUES ('$id_siswa', 'kesehatan_mental', '$json_mental', '$skor_mental', '$score_val')";
     
     $sql_karir = "INSERT INTO hasil_asesmen (id_siswa, kategori, ringkasan_hasil, skor) 
                   VALUES ('$id_siswa', 'minat_karir', '$json_karir', '$skor_karir')";
