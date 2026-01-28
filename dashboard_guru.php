@@ -44,7 +44,17 @@ $stat_today = $conn->query("SELECT COUNT(*) as total FROM konsultasi WHERE id_ko
 $stat_pending = $conn->query("SELECT COUNT(*) as total FROM konsultasi WHERE id_konselor='$id_konselor' AND status='menunggu'")->fetch_assoc()['total'];
 
 // Siswa Prioritas (Yang punya skor 'PERLU PERHATIAN KHUSUS')
-$stat_priority = $conn->query("SELECT COUNT(DISTINCT id_siswa) as total FROM hasil_asesmen WHERE skor LIKE '%PERLU PERHATIAN KHUSUS%'")->fetch_assoc()['total'];
+$stat_priority = $conn->query("
+    SELECT COUNT(DISTINCT ha.id_siswa) as total 
+    FROM hasil_asesmen ha
+    INNER JOIN (
+        SELECT id_siswa, MAX(terakhir_diperbarui) as max_date
+        FROM hasil_asesmen
+        WHERE kategori = 'kesehatan_mental'
+        GROUP BY id_siswa
+    ) latest ON ha.id_siswa = latest.id_siswa AND ha.terakhir_diperbarui = latest.max_date
+    WHERE ha.kategori = 'kesehatan_mental' AND ha.skor LIKE '%PERLU PERHATIAN KHUSUS%'
+")->fetch_assoc()['total'];
 
 // --- ANALYTICS LOGIC ---
 
@@ -113,10 +123,22 @@ if ($trend_diff > 0) {
 // Query Data
 
 // Permintaan Masuk (Pending) + Cek Prioritas
-// Kita join ke tabel siswa, lalu subquery/join ke hasil_asesmen untuk cek status mental
+// Kita join ke tabel siswa, lalu subquery/join ke hasil_asesmen untuk cek status mental TERBARU
 $sql_requests = "
     SELECT k.*, s.nama_lengkap, s.tingkat_kelas, s.jurusan,
-    (SELECT COUNT(*) FROM hasil_asesmen ha WHERE ha.id_siswa = k.id_siswa AND ha.skor LIKE '%PERLU PERHATIAN KHUSUS%') as is_priority
+    (
+        SELECT COUNT(*) 
+        FROM hasil_asesmen ha
+        INNER JOIN (
+            SELECT id_siswa, MAX(terakhir_diperbarui) as max_date
+            FROM hasil_asesmen
+            WHERE kategori = 'kesehatan_mental'
+            GROUP BY id_siswa
+        ) latest ON ha.id_siswa = latest.id_siswa AND ha.terakhir_diperbarui = latest.max_date
+        WHERE ha.id_siswa = k.id_siswa 
+        AND ha.kategori = 'kesehatan_mental' 
+        AND ha.skor LIKE '%PERLU PERHATIAN KHUSUS%'
+    ) as is_priority
     FROM konsultasi k 
     JOIN siswa s ON k.id_siswa = s.id 
     WHERE k.id_konselor = '$id_konselor' AND k.status = 'menunggu' 
