@@ -227,7 +227,7 @@ if (isset($_GET['status']) && $_GET['status'] == 'updated') {
                     </svg>
                 </div>
                 <div>
-                    <h1 class="plus-jakarta font-extrabold text-xl text-slate-900 leading-tight">Admin<span class="text-blue-600">Counsel</span></h1>
+                    <h1 class="plus-jakarta font-extrabold text-xl text-slate-900 leading-tight">BK<span class="text-blue-600">Skaju</span></h1>
                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] leading-none">Management Portal</p>
                 </div>
             </div>
