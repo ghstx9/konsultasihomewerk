@@ -117,7 +117,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['peran'] == 'siswa') {
         </div>
 
         <!-- Footer Info -->
-        <div class="relative z-10 text-xs text-brand-300/60 font-medium tracking-wider uppercase">
+        <div class="relative z-10 text-xs text-brand-300/60 font-medium tracking-wider">
             &copy; 2026 Ricky Marove
         </div>
     </div>
