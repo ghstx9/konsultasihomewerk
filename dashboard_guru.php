@@ -100,22 +100,20 @@ $trend_prev = $conn->query($sql_trend_prev)->fetch_assoc()['total'];
 
 $trend_diff = $trend_curr - $trend_prev;
 $trend_text = "";
-$trend_color = "text-slate-500";
+$trend_color = "text-stone-500";
 $trend_icon = "";
 
 if ($trend_diff > 0) {
     $trend_text = "+" . $trend_diff . " dari minggu lalu";
-    $trend_color = "text-emerald-600";
+    $trend_color = "text-teal-600";
     $trend_icon = "↑";
 } elseif ($trend_diff < 0) {
     $trend_text = $trend_diff . " dari minggu lalu";
-    $trend_color = "text-red-500"; // Less requests might be bad or good depending on context, assuming neutral/red for drop in engagement? Or green?
-    // Let's assume for a "Request" stat, ANY change is just a trend. But usually more requests = more work. 
-    // Let's keep it neutral or red if significant drop? Let's just use red for negative numbers visually.
+    $trend_color = "text-rose-500";
     $trend_icon = "↓";
 } else {
     $trend_text = "Stabil dari minggu lalu";
-    $trend_color = "text-slate-500";
+    $trend_color = "text-stone-500";
     $trend_icon = "-";
 }
 
@@ -161,215 +159,419 @@ $res_schedule = $conn->query($sql_schedule);
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>Dashboard Konselor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Konselor | Modern Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
-    <style>.lexend-font { font-family: "Lexend", sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-[#FDFDFD] lexend-font min-h-screen">
+    <style>
+        :root {
+            --color-bg: #FAFAF9;
+            --color-surface: #FFFFFF;
+            --color-surface-soft: #F5F5F4;
+            --color-accent: #0D9488;
+            --color-accent-light: #CCFBF1;
+            --color-text: #1C1917;
+            --color-text-muted: #78716C;
+            --shadow-soft: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-elevated: 0 4px 6px rgba(0,0,0,0.03), 0 12px 24px rgba(0,0,0,0.06);
+        }
 
-    <nav class="bg-white shadow-sm px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <h1 class="font-bold text-[#6C5CE7] text-xl">Panel Konselor</h1>
-        <div class="flex gap-4 items-center">
-            <span class="text-slate-500 text-sm"><?= $guru['nama_lengkap'] ?></span>
-            <a href="logout.php" class="text-slate-400 text-sm hover:text-[#6C5CE7]">Keluar</a>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            scroll-behavior: smooth;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(231, 229, 228, 0.5);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0D9488, #14B8A6, #2DD4BF);
+        }
+
+        .card-shadow {
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        .card-shadow:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #0F766E;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E7E5E4;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #D6D3D1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="glass-nav px-8 py-5 flex justify-between items-center sticky top-0 z-[100]">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 hero-gradient rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+            </div>
+            <h1 class="font-extrabold text-[#1C1917] text-xl tracking-tight">Dashboard <span class="text-teal-600 font-medium">Guru</span></h1>
+        </div>
+        <div class="flex gap-6 items-center">
+            <div class="flex flex-col items-end">
+                <span class="text-stone-900 font-bold text-sm"><?= $guru['nama_lengkap'] ?></span>
+                <span class="text-stone-400 text-[10px] uppercase font-bold tracking-widest">Konselor</span>
+            </div>
+            <div class="h-8 w-[1px] bg-stone-200"></div>
+            <a href="logout.php" class="text-stone-400 font-medium text-sm hover:text-rose-500 transition-colors flex items-center gap-2">
+                Keluar
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            </a>
         </div>
     </nav>
 
-    <div class="container mx-auto p-6">
+    <main class="max-w-[1400px] mx-auto p-8 lg:p-12">
         
         <!-- ANALYTICS SECTION -->
-        <h2 class="text-xl font-bold text-slate-700 mb-6">Analitik dan Wawasan</h2>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-            <!-- Wellness Distribution Chart -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 flex flex-col md:flex-row items-center gap-8">
-                <div class="w-full md:w-1/3 relative h-48 md:h-auto flex justify-center">
-                    <canvas id="wellnessChart" class="max-w-[200px] max-h-[200px]"></canvas>
+        <div class="mb-12 animate-up stagger-1">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-black text-stone-900 tracking-tight">Wawasan Aktivitas</h2>
+                    <p class="text-stone-500 text-sm mt-1">Pantau perkembangan kesehatan mental siswa Anda secara real-time.</p>
                 </div>
-                <div class="flex-1 w-full">
-                    <h3 class="font-bold text-lg text-slate-800 mb-2">Student Wellness Distribution</h3>
-                    <p class="text-sm text-slate-500 mb-6">Distribusi hasil asesmen kesehatan mental siswa terbaru.</p>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                            <span class="text-sm font-bold text-emerald-700 flex items-center gap-2">
-                                <span class="w-3 h-3 bg-emerald-500 rounded-full"></span> Stabil
-                            </span>
-                            <span class="font-bold text-emerald-700"><?= $wellness_stats['Stabil'] ?> Siswa</span>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-xl border border-red-100">
-                            <span class="text-sm font-bold text-red-700 flex items-center gap-2">
-                                <span class="w-3 h-3 bg-red-500 rounded-full"></span> Perlu Perhatian
-                            </span>
-                            <span class="font-bold text-red-700"><?= $wellness_stats['Berisiko'] ?> Siswa</span>
-                        </div>
-                    </div>
+                <div class="flex gap-2">
+                    <span class="px-4 py-2 bg-white border border-stone-200 rounded-full text-xs font-bold text-stone-600">
+                        <?= date('d M Y') ?>
+                    </span>
                 </div>
             </div>
 
-            <!-- Trend Indicators -->
-            <div class="space-y-6">
-                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-10 -mt-10 blur-2xl opacity-50"></div>
-                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2 relative z-10">Trend Permintaan</p>
-                    <div class="flex items-end gap-3 mb-2 relative z-10">
-                        <h3 class="text-4xl font-extrabold text-slate-900"><?= $trend_curr ?></h3>
-                        <span class="text-sm font-bold <?= $trend_color ?> mb-1.5 flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-                            <?= $trend_icon ?> <?= $trend_text ?>
-                        </span>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Wellness Distribution Chart -->
+                <div class="bg-white p-8 rounded-[2.5rem] card-shadow lg:col-span-2 flex flex-col md:flex-row items-center gap-10 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-teal-50 rounded-full blur-3xl opacity-40"></div>
+                    
+                    <div class="w-full md:w-1/2 relative h-56 flex justify-center">
+                        <canvas id="wellnessChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-3xl font-black text-stone-900"><?= $wellness_stats['Stabil'] + $wellness_stats['Berisiko'] ?></span>
+                            <span class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Total Siswa</span>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-400 relative z-10">Total permintaan konsultasi dalam 7 hari terakhir.</p>
-                 </div>
-            </div>
-        </div>
 
-        <!-- Initialize Chart -->
-        <script>
-            const ctx = document.getElementById('wellnessChart');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Stabil', 'Perlu Perhatian'],
-                    datasets: [{
-                        data: [<?= $wellness_stats['Stabil'] ?>, <?= $wellness_stats['Berisiko'] ?>],
-                        backgroundColor: [
-                            '#10B981', // Emerald 500
-                            '#EF4444'  // Red 500
-                        ],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    cutout: '75%',
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        </script>
+                    <div class="flex-1 w-full relative z-10">
+                        <h3 class="font-extrabold text-xl text-stone-900 mb-2">Sebaran Kesejahteraan</h3>
+                        <p class="text-sm text-stone-500 mb-8 leading-relaxed">Persentase kondisi kesehatan mental berdasarkan asesmen terbaru.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="group flex justify-between items-center p-4 bg-teal-50/50 rounded-2xl border border-teal-100/50 transition-all hover:bg-teal-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-2 h-8 bg-teal-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-stone-400 text-[10px] font-bold uppercase tracking-wider">Kondisi</p>
+                                        <span class="text-sm font-bold text-teal-800">Stabil & Normal</span>
+                                    </div>
+                                </div>
+                                <span class="font-black text-xl text-teal-600"><?= $wellness_stats['Stabil'] ?></span>
+                            </div>
+                            
+                            <div class="group flex justify-between items-center p-4 bg-rose-50/50 rounded-2xl border border-rose-100/50 transition-all hover:bg-rose-50">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-2 h-8 bg-rose-500 rounded-full"></div>
+                                    <div>
+                                        <p class="text-stone-400 text-[10px] font-bold uppercase tracking-wider">Kondisi</p>
+                                        <span class="text-sm font-bold text-rose-800">Perlu Perhatian</span>
+                                    </div>
+                                </div>
+                                <span class="font-black text-xl text-rose-600"><?= $wellness_stats['Berisiko'] ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="bg-[#6C5CE7] text-white p-8 rounded-2xl shadow-lg mb-8 relative overflow-hidden">
-            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-20 rounded-full blur-3xl"></div>
-            
-            <div class="relative z-10">
-                <h2 class="text-2xl font-bold mb-6">Ringkasan Aktivitas</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <p class="text-slate-500 text-sm">Konsultasi Hari Ini</p>
-                        <h3 class="text-3xl font-bold text-slate-800"><?= $stat_today ?></h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <p class="text-slate-500 text-sm">Permintaan Baru</p>
-                        <h3 class="text-3xl font-bold text-slate-800"><?= $stat_pending ?></h3>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <p class="text-slate-500 text-sm">Siswa Prioritas (Risk)</p>
-                        <h3 class="text-3xl font-bold text-red-600"><?= $stat_priority ?></h3>
-                    </div>
+                <!-- Trend Indicators -->
+                <div class="grid grid-rows-2 gap-8">
+                     <div class="bg-white p-8 rounded-[2.5rem] card-shadow flex flex-col justify-center relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full -mr-12 -mt-12 blur-2xl opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+                        <p class="text-stone-400 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 relative z-10">Trend Permintaan</p>
+                        <div class="flex items-baseline gap-4 mb-2 relative z-10">
+                            <h3 class="text-6xl font-black text-stone-900 tracking-tighter"><?= $trend_curr ?></h3>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-black <?= $trend_color ?> flex items-center gap-1">
+                                    <?= $trend_icon ?> <?= $trend_text ?>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-stone-400 mt-2 font-medium relative z-10">Total permintaan mingguan.</p>
+                     </div>
+
+                     <div class="hero-gradient p-8 rounded-[2.5rem] shadow-xl shadow-teal-500/20 flex flex-col justify-center relative overflow-hidden group">
+                        <div class="absolute bottom-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-20 -mb-20 blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
+                        <p class="text-white/70 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 relative z-10">Prioritas Utama</p>
+                        <div class="flex items-baseline gap-4 relative z-10">
+                            <h3 class="text-6xl font-black text-white tracking-tighter"><?= $stat_priority ?></h3>
+                            <span class="text-stone-900/40 font-black text-xs bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">Siswa Berisiko</span>
+                        </div>
+                        <p class="text-white/60 text-xs mt-3 font-medium relative z-10">Segera tindak lanjuti asesmen terbaru.</p>
+                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#F9F7FF] h-full">
-                <h3 class="font-bold text-lg text-slate-700 mb-6 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mailbox-icon lucide-mailbox text-[#6C5CE7]"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"/><polyline points="15,9 18,9 18,11"/><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"/><line x1="6" x2="7" y1="10" y2="10"/></svg> Permintaan Masuk
-                    <?php if($stat_pending > 0): ?>
-                        <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full"><?= $stat_pending ?></span>
-                    <?php endif; ?>
-                </h3>
+        <!-- ACTIVITY SUMMARY HERO -->
+        <div class="bg-white p-2 rounded-[3.5rem] mb-16 animate-up stagger-2 card-shadow">
+            <div class="p-10 lg:p-14 bg-stone-50 rounded-[3rem] border border-stone-100 flex flex-col lg:flex-row items-center justify-between gap-12 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#0D9488 1px, transparent 1px); background-size: 24px 24px;"></div>
                 
-                <div class="space-y-4">
+                <div class="relative z-10 text-center lg:text-left">
+                    <span class="inline-block px-4 py-1.5 bg-teal-100 text-teal-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-6">Ringkasan Hari Ini</span>
+                    <h2 class="text-4xl lg:text-5xl font-black text-stone-900 tracking-tight leading-tight mb-4">Efisiensi kerja Anda <br><span class="text-teal-600">dimulai di sini.</span></h2>
+                    <p class="text-stone-500 max-w-md mx-auto lg:mx-0 font-medium">Data berikut merangkum beban kerja dan tanggung jawab Anda untuk hari ini.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full lg:w-auto relative z-10">
+                    <div class="bg-white p-8 rounded-[2rem] border border-stone-200/60 shadow-sm flex flex-col min-w-[200px] hover:border-teal-300 transition-colors">
+                        <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                        </div>
+                        <span class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Konsultasi</span>
+                        <h3 class="text-4xl font-black text-stone-900"><?= $stat_today ?></h3>
+                        <p class="text-stone-400 text-xs mt-1 font-medium">Sesi Disetujui</p>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-[2rem] border border-stone-200/60 shadow-sm flex flex-col min-w-[200px] group hover:border-amber-300 transition-colors">
+                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"/><polyline points="15,9 18,9 18,11"/><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"/><line x1="6" x2="7" y1="10" y2="10"/></svg>
+                        </div>
+                        <span class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Permintaan</span>
+                        <h3 class="text-4xl font-black text-stone-900 group-hover:text-amber-600 transition-colors"><?= $stat_pending ?></h3>
+                        <p class="text-stone-400 text-xs mt-1 font-medium">Masuk Hari Ini</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- INCOMING REQUESTS -->
+            <div class="animate-up stagger-3">
+                <div class="flex items-end justify-between mb-8 px-2">
+                    <div>
+                        <h3 class="font-black text-2xl text-stone-900 tracking-tight">Permintaan Masuk</h3>
+                        <p class="text-stone-500 text-sm mt-1">Kelola permohonan sesi konsultasi siswa.</p>
+                    </div>
+                    <?php if($stat_pending > 0): ?>
+                        <span class="bg-teal-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-500/20 translate-y-[-4px]"><?= $stat_pending ?> BARU</span>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="space-y-6 max-h-[700px] overflow-y-auto pr-4 custom-scrollbar">
                     <?php if($res_requests->num_rows > 0): ?>
                         <?php while($req = $res_requests->fetch_assoc()): ?>
-                            <div class="bg-[#F9F7FF] p-5 rounded-xl border <?= $req['is_priority'] > 0 ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-100' ?>">
-                                <div class="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h4 class="font-bold text-slate-800 flex items-center gap-2">
-                                            <a href="detail_siswa.php?id=<?= $req['id_siswa'] ?>" class="hover:text-[#6C5CE7] hover:underline transition">
-                                                <?= $req['nama_lengkap'] ?>
-                                            </a>
-                                            <?php if($req['is_priority'] > 0): ?>
-                                                <span class="bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wide">Prioritas</span>
-                                            <?php endif; ?>
-                                        </h4>
-                                        <p class="text-xs text-slate-500"><?= $req['tingkat_kelas'] ?> <?= $req['jurusan'] ?></p>
+                            <div class="bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col relative overflow-hidden transition-all duration-300 <?= $req['is_priority'] > 0 ? 'ring-2 ring-rose-500/20 border-rose-100' : '' ?>">
+                                <?php if($req['is_priority'] > 0): ?>
+                                    <div class="absolute top-0 right-0">
+                                        <div class="bg-rose-500 text-white text-[9px] font-black px-4 py-1 rounded-bl-2xl uppercase tracking-tighter">Prioritas</div>
                                     </div>
-                                    <span class="text-xs bg-white text-slate-600 px-2 py-1 rounded border border-slate-100">
-                                        <?= date('d M, H:i', strtotime($req['tanggal_konsultasi'])) ?>
-                                    </span>
+                                <?php endif; ?>
+
+                                <div class="flex justify-between items-start mb-6">
+                                    <div class="flex gap-4">
+                                        <div class="w-14 h-14 rounded-2xl bg-stone-100 flex items-center justify-center font-black text-xl text-stone-400">
+                                            <?= substr($req['nama_lengkap'], 0, 1) ?>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-black text-lg text-stone-900 leading-tight">
+                                                <a href="detail_siswa.php?id=<?= $req['id_siswa'] ?>" class="hover:text-teal-600 transition-colors">
+                                                    <?= $req['nama_lengkap'] ?>
+                                                </a>
+                                            </h4>
+                                            <p class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1"><?= $req['tingkat_kelas'] ?> • <?= $req['jurusan'] ?></p>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="bg-white p-3 rounded-lg mb-4 border border-slate-50">
-                                    <p class="text-xs font-bold text-slate-500 uppercase mb-1"><?= $req['kategori_topik'] ?></p>
-                                    <p class="text-sm text-slate-700 italic">"<?= $req['deskripsi_keluhan'] ?>"</p>
+                                <div class="bg-stone-50/80 p-6 rounded-3xl mb-8 border border-stone-100">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-[10px] font-black text-teal-600 uppercase tracking-widest"><?= $req['kategori_topik'] ?></span>
+                                        <span class="text-[10px] font-bold text-stone-400 px-3 py-1 bg-white rounded-full border border-stone-200">
+                                            <?= date('d M • H:i', strtotime($req['tanggal_konsultasi'])) ?>
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-stone-600 font-medium italic leading-relaxed">"<?= $req['deskripsi_keluhan'] ?>"</p>
                                 </div>
 
-                                <div class="flex gap-2">
-                                    <a href="?action=approve&id=<?= $req['id'] ?>" class="flex-1 bg-[#6C5CE7] hover:bg-[#5B4ED1] text-white text-center py-2 rounded-lg text-sm font-bold transition">
-                                        Terima
+                                <div class="flex gap-3 mt-auto">
+                                    <a href="?action=approve&id=<?= $req['id'] ?>" class="flex-1 btn-primary text-center py-4 rounded-2xl text-xs font-black shadow-lg shadow-teal-500/10">
+                                        TERIMA JADWAL
                                     </a>
-                                    <a href="?action=reject&id=<?= $req['id'] ?>" onclick="return confirm('Tolak permintaan ini?')" class="flex-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 text-center py-2 rounded-lg text-sm font-bold transition">
-                                        Tolak
+                                    <a href="?action=reject&id=<?= $req['id'] ?>" onclick="return confirm('Tolak permintaan ini?')" class="px-6 py-4 bg-white border border-stone-200 text-stone-400 hover:text-rose-500 hover:border-rose-200 rounded-2xl text-xs font-black transition-all">
+                                        TOLAK
                                     </a>
                                 </div>
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <div class="bg-[#F9F7FF] p-8 rounded-xl border border-dashed border-slate-300 text-center text-slate-400">
-                            Tidak ada permintaan baru.
+                        <div class="bg-stone-50 p-16 rounded-[2.5rem] border-2 border-dashed border-stone-200 text-center">
+                            <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D6D3D1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 13-1.25-1.25a2 2 0 0 0-2.83 0L17 12.5a2 2 0 0 1-2.83 0l-1.92-1.92a2 2 0 0 0-2.83 0L8.5 11.5a2 2 0 0 1-2.83 0L4 10a2 2 0 0 0-2.83 0L1 10"/><path d="M1 17h22"/><path d="M1 21h22"/></svg>
+                            </div>
+                            <p class="text-stone-400 font-extrabold text-sm uppercase tracking-widest">Antrian Bersih</p>
+                            <p class="text-stone-300 text-xs mt-2 font-medium">Tidak ada permintaan konsultasi yang tertunda.</p>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-[#F9F7FF] h-full">
-                <h3 class="font-bold text-lg text-slate-700 mb-6 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-icon lucide-calendar text-[#6C5CE7]"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg> Jadwal & Riwayat Sesi</h3>
-                <div class="rounded-xl overflow-hidden">
+            <!-- SCHEDULE & HISTORY -->
+            <div class="animate-up stagger-4">
+                <div class="mb-8 px-2">
+                    <h3 class="font-black text-2xl text-stone-900 tracking-tight">Jadwal & Riwayat</h3>
+                    <p class="text-stone-500 text-sm mt-1">Sesi yang disetujui dan riwayat aktivitas laporan.</p>
+                </div>
+                
+                <div class="bg-white p-4 rounded-[3rem] card-shadow border border-stone-50 min-h-[500px]">
                     <?php if($res_schedule->num_rows > 0): ?>
-                        <div class="space-y-4">
+                        <div class="space-y-4 max-h-[700px] overflow-y-auto pr-4 custom-scrollbar">
                             <?php while($sch = $res_schedule->fetch_assoc()): ?>
-                                <div class="p-4 bg-[#F9F7FF] rounded-xl flex gap-4 items-center">
-                                    <div class="bg-[#6C5CE7] text-white w-14 h-14 rounded-lg flex flex-col items-center justify-center flex-shrink-0">
-                                        <span class="text-xs font-bold uppercase"><?= date('M', strtotime($sch['tanggal_konsultasi'])) ?></span>
-                                        <span class="text-xl font-bold"><?= date('d', strtotime($sch['tanggal_konsultasi'])) ?></span>
+                                <div class="group p-6 bg-stone-50/50 rounded-[2rem] border border-stone-100 hover:bg-white hover:border-stone-200 hover:shadow-xl hover:shadow-stone-200/50 transition-all duration-300 flex flex-col md:flex-row gap-6 md:items-center">
+                                    <div class="flex items-center gap-6 flex-grow">
+                                        <div class="hero-gradient text-white w-20 h-20 rounded-[2rem] flex flex-col items-center justify-center flex-shrink-0 shadow-lg shadow-teal-500/10 transition-transform group-hover:scale-105">
+                                            <span class="text-[9px] font-black uppercase tracking-[0.2em] mb-0.5 opacity-80"><?= date('M', strtotime($sch['tanggal_konsultasi'])) ?></span>
+                                            <span class="text-2xl font-black leading-none"><?= date('d', strtotime($sch['tanggal_konsultasi'])) ?></span>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="text-stone-400 text-[9px] font-black uppercase tracking-widest mb-1"><?= date('H:i', strtotime($sch['tanggal_konsultasi'])) ?> WIB • <?= $sch['kategori_topik'] ?></p>
+                                            <h4 class="font-black text-lg text-stone-900">
+                                                <a href="detail_siswa.php?id=<?= $sch['id_siswa'] ?>" class="hover:text-teal-600 transition-colors">
+                                                    <?= $sch['nama_lengkap'] ?>
+                                                </a>
+                                            </h4>
+                                        </div>
                                     </div>
-                                    <div class="flex-grow">
-                                        <h4 class="font-bold text-slate-800">
-                                            <a href="detail_siswa.php?id=<?= $sch['id_siswa'] ?>" class="hover:text-[#6C5CE7] hover:underline transition">
-                                                <?= $sch['nama_lengkap'] ?>
+                                    
+                                    <div class="md:shrink-0">
+                                        <?php if($sch['status'] == 'selesai'): ?>
+                                            <a href="laporan_konsultasi.php?id=<?= $sch['id'] ?>" class="flex items-center gap-2 px-6 py-4 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-2xl text-[11px] font-black transition-all">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                                LIHAT LAPORAN
                                             </a>
-                                        </h4>
-                                        <p class="text-sm text-slate-500"><?= date('H:i', strtotime($sch['tanggal_konsultasi'])) ?> WIB • <?= $sch['kategori_topik'] ?></p>
+                                        <?php else: ?>
+                                            <a href="tulis_laporan.php?id=<?= $sch['id'] ?>" class="flex items-center gap-2 px-6 py-4 bg-white border border-stone-200 text-stone-600 hover:text-teal-600 hover:border-teal-200 rounded-2xl text-[11px] font-black transition-all group-hover:bg-stone-50">
+                                                ISI LAPORAN
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
-                                    <?php if($sch['status'] == 'selesai'): ?>
-                                        <a href="laporan_konsultasi.php?id=<?= $sch['id'] ?>" class="bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                                            Lihat Laporan
-                                        </a>
-                                    <?php else: ?>
-                                        <a href="tulis_laporan.php?id=<?= $sch['id'] ?>" class="bg-white border border-slate-200 text-slate-600 hover:text-[#6C5CE7] hover:border-[#6C5CE7] px-3 py-2 rounded-lg text-xs font-bold transition">
-                                            Isi Laporan
-                                        </a>
-                                    <?php endif; ?>
                                 </div>
                             <?php endwhile; ?>
                         </div>
                     <?php else: ?>
-                        <div class="p-8 text-center text-slate-400 bg-[#F9F7FF] rounded-xl border border-dashed border-slate-300">
-                            Belum ada jadwal yang disetujui.
+                        <div class="p-16 text-center">
+                            <div class="w-20 h-20 bg-stone-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D6D3D1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                            </div>
+                            <p class="text-stone-300 font-extrabold text-sm uppercase tracking-widest">Kosong</p>
+                            <p class="text-stone-200 text-xs mt-2 font-medium">Belum ada jadwal konsultasi yang disetujui.</p>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
-
         </div>
-    </div>
+    </main>
+
+    <!-- Initialize Chart -->
+    <script>
+        const ctx = document.getElementById('wellnessChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Stabil', 'Berisiko'],
+                    datasets: [{
+                        data: [<?= $wellness_stats['Stabil'] ?>, <?= $wellness_stats['Berisiko'] ?>],
+                        backgroundColor: [
+                            '#0D9488', // Teal 600
+                            '#F43F5E'  // Rose 500
+                        ],
+                        hoverBackgroundColor: [
+                            '#0F766E',
+                            '#E11D48'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 12,
+                        borderRadius: 20,
+                        spacing: 8
+                    }]
+                },
+                options: {
+                    cutout: '82%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1C1917',
+                            titleFont: { size: 14, weight: 'bold', family: "'Plus Jakarta Sans'" },
+                            bodyFont: { size: 13, family: "'Plus Jakarta Sans'" },
+                            padding: 16,
+                            cornerRadius: 16,
+                            displayColors: false
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>
